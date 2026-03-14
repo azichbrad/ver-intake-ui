@@ -5,8 +5,7 @@ function App() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   
-  // resultData holds the raw AI output, formData holds the user's editable version
-  const [resultData, setResultData] = useState<any>(null)
+  // We only need formData now for the editable UI
   const [formData, setFormData] = useState<any>(null)
   const [isSyncing, setIsSyncing] = useState(false)
 
@@ -15,14 +14,12 @@ function App() {
       const file = e.target.files[0]
       setImage(file)
       setPreviewUrl(URL.createObjectURL(file))
-      setResultData(null) 
-      setFormData(null)
+      setFormData(null) // Reset form data on new image
     }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    // Dynamically update the specific field the user is typing in
     setFormData((prev: any) => ({ ...prev, [name]: value }));
   }
 
@@ -30,7 +27,7 @@ function App() {
     setIsSyncing(true);
     try {
       // 👇 Paste your Webhook.site URL here!
-      const pmsWebhookUrl = 'https://webhook.site/YOUR-UNIQUE-ID'; 
+      const pmsWebhookUrl = 'https://webhook.site/d3b1bc3c-7feb-491c-8d81-758a7eb474fd'; 
       
       const response = await fetch(pmsWebhookUrl, {
         method: 'POST',
@@ -38,7 +35,7 @@ function App() {
         body: JSON.stringify({
           source: 'Vet Intake Scanner UI (Human Approved)',
           timestamp: new Date().toISOString(),
-          patientData: formData // Sending the EDITED data, not the raw AI data
+          patientData: formData 
         })
       });
 
@@ -64,7 +61,7 @@ function App() {
 
     try {
       // 👇 Make sure this is still your actual Render API URL!
-      const response = await fetch('https://YOUR-RENDER-URL.onrender.com/api/intake/parse', {
+      const response = await fetch('https://vet-intake-api.onrender.com/api/intake/parse', {
         method: 'POST',
         body: uploadData,
       });
@@ -72,9 +69,8 @@ function App() {
       if (!response.ok) throw new Error(`Server responded with ${response.status}`);
 
       const data = await response.json();
-      setResultData(data);
       
-      // Map the AI's nested JSON into a flat, easy-to-edit state object
+      // Immediately map to formData, no unused variables left behind!
       if (data?.data) {
         setFormData({
           petName: data.data.patient?.name || '',
