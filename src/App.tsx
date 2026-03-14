@@ -88,44 +88,104 @@ function App() {
 
        {/* The AI Results Display */}
         {resultData && resultData.data && (
-          <div className="mt-8 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden animate-fade-in">
+          <div className="mt-8 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden animate-fade-in text-left w-full">
             {/* Success Header */}
-            <div className="bg-green-600 px-4 py-3 flex items-center">
-              <svg className="w-5 h-5 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-              <h2 className="text-md font-bold text-white">Extraction Successful</h2>
+            <div className="bg-green-600 px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <h2 className="text-md font-bold text-white">Digital Patient File Ready</h2>
+              </div>
+              <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-semibold border border-green-400">
+                Synced to PMS
+              </span>
             </div>
             
             <div className="p-5 space-y-6">
-              {/* Patient Info Section */}
+              {/* 1. Patient Info Section */}
               <div>
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 border-b pb-1">Patient Details</h3>
+                <h3 className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3 border-b pb-1">Patient Details</h3>
                 <div className="grid grid-cols-2 gap-y-4 gap-x-4">
                   <div>
                     <p className="text-xs text-gray-500">Name</p>
                     <p className="font-semibold text-gray-800">{resultData.data.patient?.name || 'N/A'}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Age</p>
-                    <p className="font-semibold text-gray-800">{resultData.data.patient?.age_years ? `${resultData.data.patient.age_years} yrs` : 'N/A'}</p>
+                    <p className="text-xs text-gray-500">Species / Breed</p>
+                    <p className="font-semibold text-gray-800">{resultData.data.patient?.species || '-'} / {resultData.data.patient?.breed || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Age & Sex</p>
+                    <p className="font-semibold text-gray-800">{resultData.data.patient?.age || '-'} • {resultData.data.patient?.sex || '-'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Spayed / Neutered</p>
+                    <p className="font-semibold text-gray-800">
+                      {resultData.data.patient?.spayedNeutered === true ? 'Yes' : resultData.data.patient?.spayedNeutered === false ? 'No' : 'Unknown'}
+                    </p>
                   </div>
                   <div className="col-span-2">
-                    <p className="text-xs text-gray-500">Species / Breed</p>
-                    <p className="font-semibold text-gray-800">{resultData.data.patient?.species || 'N/A'} - {resultData.data.patient?.breed || 'N/A'}</p>
+                    <p className="text-xs text-gray-500">Color / Markings</p>
+                    <p className="font-semibold text-gray-800">{resultData.data.patient?.colorMarkings || 'N/A'}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Owner Info Section */}
+              {/* 2. Owner Info Section */}
               <div>
-                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 border-b pb-1">Owner Information</h3>
+                <h3 className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3 border-b pb-1">Owner Information</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2">
                     <p className="text-xs text-gray-500">Full Name</p>
                     <p className="font-semibold text-gray-800">{resultData.data.owner?.firstName || ''} {resultData.data.owner?.lastName || 'N/A'}</p>
                   </div>
-                  <div className="col-span-2">
-                    <p className="text-xs text-gray-500">Phone Number</p>
+                  <div>
+                    <p className="text-xs text-gray-500">Phone</p>
                     <p className="font-semibold text-gray-800">{resultData.data.owner?.phone || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Email</p>
+                    <p className="font-semibold text-gray-800 break-all">{resultData.data.owner?.email || 'N/A'}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <p className="text-xs text-gray-500">Address</p>
+                    <p className="font-semibold text-gray-800">{resultData.data.owner?.address || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. Medical & Visit Details */}
+              <div>
+                <h3 className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3 border-b pb-1">Visit Details</h3>
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-xs text-gray-500">Reason for Visit / Chief Complaint</p>
+                    <p className="font-semibold text-gray-800">{resultData.data.visitDetails?.reasonForVisit || 'N/A'}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-xs text-gray-500">Current Medications</p>
+                      {resultData.data.visitDetails?.currentMedications?.length > 0 ? (
+                        <ul className="list-disc list-inside font-semibold text-gray-800 text-sm">
+                          {resultData.data.visitDetails.currentMedications.map((med: string, i: number) => <li key={i}>{med}</li>)}
+                        </ul>
+                      ) : (
+                        <p className="font-semibold text-gray-800">None reported</p>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500">Known Allergies</p>
+                      {resultData.data.visitDetails?.allergies?.length > 0 ? (
+                        <ul className="list-disc list-inside font-semibold text-red-600 text-sm">
+                          {resultData.data.visitDetails.allergies.map((allergy: string, i: number) => <li key={i}>{allergy}</li>)}
+                        </ul>
+                      ) : (
+                        <p className="font-semibold text-gray-800">None reported</p>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Previous Clinic</p>
+                    <p className="font-semibold text-gray-800">{resultData.data.visitDetails?.previousClinic || 'N/A'}</p>
                   </div>
                 </div>
               </div>
@@ -133,12 +193,11 @@ function App() {
               {/* Review Warning if AI was unsure */}
               {resultData.meta?.flaggedForReview && (
                  <div className="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
-                   <div className="flex">
-                     <div className="ml-3">
-                       <p className="text-sm text-yellow-700 font-medium">
-                         Please double-check the values. The handwriting was difficult to read.
-                       </p>
-                     </div>
+                   <div className="flex items-center">
+                     <svg className="w-5 h-5 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                     <p className="text-sm text-yellow-700 font-medium">
+                       Low confidence extraction. Please verify fields.
+                     </p>
                    </div>
                  </div>
               )}
