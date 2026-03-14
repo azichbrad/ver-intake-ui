@@ -86,18 +86,65 @@ function App() {
           </div>
         )}
 
-        {/* The AI Results Display */}
-        {resultData && (
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">Extraction Results:</h2>
-            <div className="max-h-60 overflow-y-auto">
-              <pre className="text-xs text-gray-700 whitespace-pre-wrap">
-                {JSON.stringify(resultData, null, 2)}
-              </pre>
+       {/* The AI Results Display */}
+        {resultData && resultData.data && (
+          <div className="mt-8 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden animate-fade-in">
+            {/* Success Header */}
+            <div className="bg-green-600 px-4 py-3 flex items-center">
+              <svg className="w-5 h-5 text-white mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <h2 className="text-md font-bold text-white">Extraction Successful</h2>
+            </div>
+            
+            <div className="p-5 space-y-6">
+              {/* Patient Info Section */}
+              <div>
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 border-b pb-1">Patient Details</h3>
+                <div className="grid grid-cols-2 gap-y-4 gap-x-4">
+                  <div>
+                    <p className="text-xs text-gray-500">Name</p>
+                    <p className="font-semibold text-gray-800">{resultData.data.patient?.name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500">Age</p>
+                    <p className="font-semibold text-gray-800">{resultData.data.patient?.age_years ? `${resultData.data.patient.age_years} yrs` : 'N/A'}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <p className="text-xs text-gray-500">Species / Breed</p>
+                    <p className="font-semibold text-gray-800">{resultData.data.patient?.species || 'N/A'} - {resultData.data.patient?.breed || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Owner Info Section */}
+              <div>
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 border-b pb-1">Owner Information</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2">
+                    <p className="text-xs text-gray-500">Full Name</p>
+                    <p className="font-semibold text-gray-800">{resultData.data.owner?.firstName || ''} {resultData.data.owner?.lastName || 'N/A'}</p>
+                  </div>
+                  <div className="col-span-2">
+                    <p className="text-xs text-gray-500">Phone Number</p>
+                    <p className="font-semibold text-gray-800">{resultData.data.owner?.phone || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Review Warning if AI was unsure */}
+              {resultData.meta?.flaggedForReview && (
+                 <div className="mt-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">
+                   <div className="flex">
+                     <div className="ml-3">
+                       <p className="text-sm text-yellow-700 font-medium">
+                         Please double-check the values. The handwriting was difficult to read.
+                       </p>
+                     </div>
+                   </div>
+                 </div>
+              )}
             </div>
           </div>
         )}
-
       </div>
     </div>
   )
